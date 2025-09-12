@@ -27,6 +27,7 @@ def handle_message(update, context):
     lang_code = context.bot_data["lang_code"]
     user_text = update.message.text
     session_id = update.effective_user.id
+
     response_text = get_dialogflow_response(
         project_id, session_id, user_text, lang_code)
     update.message.reply_text(response_text)
