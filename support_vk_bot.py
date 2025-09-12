@@ -25,6 +25,8 @@ def get_dialogflow_response(project_id, session_id, text, lang_code):
     response = session_client.detect_intent(
         request={"session": session, "query_input": query_input})
 
+    if response.query_result.intent.is_fallback:
+        return None
     return response.query_result.fulfillment_text
 
 
@@ -33,11 +35,12 @@ def handle_message(event, api, project_id, lang_code):
     text = event.text
     response_text = get_dialogflow_response(
         project_id, session_id, text, lang_code)
-    api.messages.send(
-        user_id=session_id,
-        message=response_text,
-        random_id=random.randint(1, 1000)
-    )
+    if response_text:
+        api.messages.send(
+            user_id=session_id,
+            message=response_text,
+            random_id=random.randint(1, 1000)
+        )
 
 
 def main():
