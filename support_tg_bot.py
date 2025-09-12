@@ -2,11 +2,15 @@ import os
 import sys
 from dotenv import load_dotenv
 from google.cloud import dialogflow
+from telegram.error import TelegramError
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from utils import setup_logger
+
+LOGGER = setup_logger(__name__)
 
 
 def start_command(update, context):
-    update.message.reply_text("Я бот!")
+    update.message.reply_text("Я бот, который ответит на ваши вопросы!")
 
 
 def get_dialogflow_response(project_id, session_id, text, lang_code):
@@ -30,7 +34,10 @@ def handle_message(update, context):
 
     response_text = get_dialogflow_response(
         project_id, session_id, user_text, lang_code)
-    update.message.reply_text(response_text)
+    try:
+        update.message.reply_text(response_text)
+    except TelegramError as e:
+        LOGGER.exception(f"Ошибка отправки сообщения {e}")
 
 
 def main():
@@ -48,6 +55,7 @@ def main():
 
     updater = Updater(token=tg_token)
     dispatcher = updater.dispatcher
+    LOGGER.info("Bot started!")
 
     dispatcher.bot_data["project_id"] = project_id
     dispatcher.bot_data["lang_code"] = lang_code
@@ -58,6 +66,7 @@ def main():
 
     updater.start_polling()
     updater.idle()
+    LOGGER.info("bot stop!")
 
 
 if __name__ == "__main__":

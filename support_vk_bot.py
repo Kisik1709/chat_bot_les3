@@ -3,16 +3,11 @@ import sys
 import vk_api
 import random
 from dotenv import load_dotenv
+from utils import setup_logger
 from google.cloud import dialogflow
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-
-# def echo(event, api):
-#     api.messages.send(
-#         user_id=event.user_id,
-#         message=event.text,
-#         random_id=random.randint(1, 1000)
-#     )
+LOGGER = setup_logger(__name__)
 
 
 def get_dialogflow_response(project_id, session_id, text, lang_code):
@@ -33,14 +28,19 @@ def get_dialogflow_response(project_id, session_id, text, lang_code):
 def handle_message(event, api, project_id, lang_code):
     session_id = event.user_id
     text = event.text
+    if not text:
+        return
     response_text = get_dialogflow_response(
         project_id, session_id, text, lang_code)
     if response_text:
-        api.messages.send(
-            user_id=session_id,
-            message=response_text,
-            random_id=random.randint(1, 1000)
-        )
+        try:
+            api.messages.send(
+                user_id=session_id,
+                message=response_text,
+                random_id=random.randint(1, 1000)
+            )
+        except Exception as e:
+            LOGGER.exception(f"Ошибка VK API: {e}", file=sys.stderr)
 
 
 def main():
@@ -57,6 +57,7 @@ def main():
 
     vk_session = vk_api.VkApi(token=token)
     api = vk_session.get_api()
+    LOGGER.info("Bot started!")
 
     longpoll = VkLongPoll(vk_session)
 
