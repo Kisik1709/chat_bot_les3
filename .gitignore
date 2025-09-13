@@ -181,3 +181,4 @@ cython_debug/
 .cursorindexingignore
 credentials.json
 questions.json
+.DS_Store
