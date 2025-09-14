@@ -18,12 +18,12 @@ def handle_message(event, api, project_id, lang_code, logger):
     if response_text:
         try:
             api.messages.send(
-                user_id=session_id,
+                user_id=event.user_id,
                 message=response_text,
                 random_id=random.randint(1, 1000)
             )
         except Exception as e:
-            logger.exception(f"Ошибка VK API: {e}", file=sys.stderr)
+            logger.exception(f"Ошибка VK API: {e}")
 
 
 def main():
