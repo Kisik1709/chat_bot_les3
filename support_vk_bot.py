@@ -2,25 +2,10 @@ import os
 import sys
 import vk_api
 import random
+from utils import get_dialogflow_response
 from dotenv import load_dotenv
 from logger import setup_logger
-from google.cloud import dialogflow
 from vk_api.longpoll import VkLongPoll, VkEventType
-
-
-def get_dialogflow_response(project_id, session_id, text, lang_code):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.TextInput(text=text, language_code=lang_code)
-    query_input = dialogflow.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input})
-
-    if response.query_result.intent.is_fallback:
-        return None
-    return response.query_result.fulfillment_text
 
 
 def handle_message(event, api, project_id, lang_code, logger):
@@ -29,7 +14,7 @@ def handle_message(event, api, project_id, lang_code, logger):
     if not text:
         return
     response_text = get_dialogflow_response(
-        project_id, session_id, text, lang_code)
+        project_id, session_id, text, lang_code, allow_fallback=False)
     if response_text:
         try:
             api.messages.send(
