@@ -29,14 +29,14 @@ def handle_message(update, context):
 def main():
     load_dotenv()
 
-    log_bot_token = os.getenv("API_TELEGRAM_LOGGER")
-    log_chat_id = os.getenv("LOGGER_CHAT_ID")
+    log_bot_token = os.getenv("TELEGRAM_TOKEN_FOR_LOGGER")
+    log_chat_id = os.getenv("TELEGRAM_CHAT_ID_FOR_LOGGER")
     if not log_bot_token or not log_chat_id:
         raise RuntimeError("Нет токена или chat_id для логгера")
 
     logger = setup_logger(__name__, log_bot_token, log_chat_id)
 
-    tg_token = os.getenv("API_TELEGRAM")
+    tg_token = os.getenv("TELEGRAM_TOKEN")
     if not tg_token:
         sys.exit("Нет ключа доступа к TG. Завершение!")
 

@@ -29,8 +29,8 @@ def handle_message(event, api, project_id, lang_code, logger):
 def main():
     load_dotenv()
 
-    log_bot_token = os.getenv("API_TELEGRAM_LOGGER")
-    log_chat_id = os.getenv("LOGGER_CHAT_ID")
+    log_bot_token = os.getenv("TELEGRAM_TOKEN_FOR_LOGGER")
+    log_chat_id = os.getenv("TELEGRAM_CHAT_ID_FOR_LOGGER")
     if not log_bot_token or not log_chat_id:
         raise RuntimeError("Нет токена или chat_id для логгера")
 
