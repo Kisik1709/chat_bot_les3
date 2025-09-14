@@ -34,18 +34,18 @@ pip install -r requirements.txt
 
 ```bash
 # Telegram-бот для пользователей
-API_TELEGRAM=токен_бота
+TELEGRAM_TOKEN=токен_бота
 
 # VK-бот
-API_VK=токен_бота
+VK_TOKEN=токен_бота
 
 # Google Dialogflow
 PROJECT_DIALOGFLOW_ID=project_id_из_консоли
 GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
 
 # Telegram-бот для логов
-API_TELEGRAM_LOGGER=токен_логгер_бота
-LOGGER_CHAT_ID=ваш_chat_id
+TELEGRAM_TOKEN_FOR_LOGGER=токен_логгер_бота
+TELEGRAM_CHAT_ID_FOR_LOGGER=ваш_chat_id
 ```
 
 ## ▶️ Использование
