@@ -1,10 +1,5 @@
-import os
-import sys
 import logging
 import telegram
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class TelegramLogHandler(logging.Handler):
@@ -21,16 +16,9 @@ class TelegramLogHandler(logging.Handler):
             print(f"Ошибка отправки лога в Telegram: {e}")
 
 
-log_bot_token = os.getenv("API_TELEGRAM_LOGGER")
-if not log_bot_token:
-    sys.exit("Нет Токена")
-log_chat_id = os.getenv("LOGGER_CHAT_ID")
-if not log_bot_token:
-    sys.exit("Не указан chat_id")
-log_bot = telegram.Bot(token=log_bot_token)
+def setup_logger(name, log_bot_token, log_chat_id):
+    log_bot = telegram.Bot(token=log_bot_token)
 
-
-def setup_logger(name=__name__):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 

@@ -3,11 +3,9 @@ import sys
 import vk_api
 import random
 from dotenv import load_dotenv
-from utils import setup_logger
+from logger import setup_logger
 from google.cloud import dialogflow
 from vk_api.longpoll import VkLongPoll, VkEventType
-
-LOGGER = setup_logger(__name__)
 
 
 def get_dialogflow_response(project_id, session_id, text, lang_code):
@@ -25,7 +23,7 @@ def get_dialogflow_response(project_id, session_id, text, lang_code):
     return response.query_result.fulfillment_text
 
 
-def handle_message(event, api, project_id, lang_code):
+def handle_message(event, api, project_id, lang_code, logger):
     session_id = event.user_id
     text = event.text
     if not text:
@@ -40,11 +38,19 @@ def handle_message(event, api, project_id, lang_code):
                 random_id=random.randint(1, 1000)
             )
         except Exception as e:
-            LOGGER.exception(f"Ошибка VK API: {e}", file=sys.stderr)
+            logger.exception(f"Ошибка VK API: {e}", file=sys.stderr)
 
 
 def main():
     load_dotenv()
+
+    log_bot_token = os.getenv("API_TELEGRAM_LOGGER")
+    log_chat_id = os.getenv("LOGGER_CHAT_ID")
+    if not log_bot_token or not log_chat_id:
+        raise RuntimeError("Нет токена или chat_id для логгера")
+
+    logger = setup_logger(__name__, log_bot_token, log_chat_id)
+
     token = os.getenv("VK_TOKEN")
     if not token:
         sys.exit("Нет vk token")
@@ -57,13 +63,13 @@ def main():
 
     vk_session = vk_api.VkApi(token=token)
     api = vk_session.get_api()
-    LOGGER.info("Bot started!")
+    logger.info("Bot started!")
 
     longpoll = VkLongPoll(vk_session)
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            handle_message(event, api, project_id, lang_code)
+            handle_message(event, api, project_id, lang_code, logger)
 
 
 if __name__ == "__main__":
