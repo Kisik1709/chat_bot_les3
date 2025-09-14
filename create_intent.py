@@ -1,14 +1,23 @@
 import os
 import sys
 import json
+import argparse
 import requests
 from dotenv import load_dotenv
 from google.cloud import dialogflow
 
 
-def load_file(full_path):
-    url = "https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json"
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--link",
+        default="https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json",
+        help="url to questions file"
+    )
+    return parser
 
+
+def load_file(full_path, url):
     response = requests.get(url=url)
     response.raise_for_status()
 
@@ -45,11 +54,15 @@ def main():
     if not project_id:
         sys.exit("Нет id dialogflow")
 
+    parser = create_parser()
+    args = parser.parse_args()
+    url = args.link
+
     base_dir = os.path.dirname(__file__)
     file_name = "questions.json"
     full_path = os.path.join(base_dir, file_name)
 
-    load_file(full_path)
+    load_file(full_path, url)
 
     with open(full_path, "r", encoding="utf-8") as file:
         questions_file = json.load(file)
