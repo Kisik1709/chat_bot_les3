@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 import argparse
 import requests
 from dotenv import load_dotenv
@@ -23,6 +22,7 @@ def load_file(full_path, url):
 
     with open(full_path, "wb") as file:
         file.write(response.content)
+    return response.json()
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
@@ -62,10 +62,7 @@ def main():
     file_name = "questions.json"
     full_path = os.path.join(base_dir, file_name)
 
-    load_file(full_path, url)
-
-    with open(full_path, "r", encoding="utf-8") as file:
-        questions_file = json.load(file)
+    questions_file = load_file(full_path, url)
 
     for display_name, content in questions_file.items():
         training_phrases_parts = content["questions"]
