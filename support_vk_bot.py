@@ -9,7 +9,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 
 
 def handle_message(event, api, project_id, lang_code, logger):
-    session_id = event.user_id
+    session_id = f"vk-{event.user_id}"
     text = event.text
     if not text:
         return

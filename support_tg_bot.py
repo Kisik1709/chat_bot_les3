@@ -16,7 +16,7 @@ def handle_message(update, context):
     project_id = context.bot_data["project_id"]
     lang_code = context.bot_data["lang_code"]
     user_text = update.message.text
-    session_id = update.effective_user.id
+    session_id = f"tg-{update.effective_user.id}"
 
     response_text = get_dialogflow_response(
         project_id, session_id, user_text, lang_code, allow_fallback=True)
